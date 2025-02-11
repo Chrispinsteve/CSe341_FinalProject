@@ -4,6 +4,7 @@ General Info
   * Clayton Meisman
   * Victor Manuel Malpica Castro
   * Johann Helaman Tellez Rodriguez
+  * Steve Chrispin
   * Ivan David Ponce Lopez
 
 ### Commercial Vehicle Information Database
@@ -182,7 +183,7 @@ As a placeholder you can view the API here:[editor.swagger.io](https://editor.sw
 | ✅  | Users Controller                                     | Johann                |
 | ✅  | Parts Controller                                     | Ivan                  |
 |     | Brands Controller                                    | Clayton               |
-|     | CarDealershipFranchise Controller                    | Victor                |
+|     | CarDealershipFranchise Controller                    | Steve                 |
 | ✅  | Vehicle Controller                                   | Johann                |
 |     | Aftermarket Controller                               | Ivan                  |
 |     | OAuth and Data restrictions                          | Group                 |
