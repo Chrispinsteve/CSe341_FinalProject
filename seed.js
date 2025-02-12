@@ -1,65 +1,56 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const Brand = require('./models/brandsModel');
-const Vehicle = require('./models/vehiclesModel');
+require('dotenv').config(); // Load environment variables
+
+const brands = require('./models/brandsModel');
+const Vehicle = require('./models/vehicleModel');
 const Part = require('./models/partsModel');
-const User = require('./models/usersModel');
+const User = require('./models/userModel');
 
-const mongoURI = process.env.MONGODB_URI;
+const MONGO_URI = process.env.MONGODB_URI;
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('✅ Connected to MongoDB'))
-    .catch(err => console.error('❌ MongoDB connection error:', err));
+if (!MONGO_URI) {
+    console.error("Error: MONGODB_URI is undefined. Check your .env file.");
+    process.exit(1); // Exit the process if URI is missing
+}
 
-async function seedDatabase() {
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('Connected to MongoDB successfully'))
+    .catch(err => console.error('Database connection error:', err));
+
+const seedDatabase = async () => {
     try {
-        // Create a sample brand
-        const toyota = await Brand.create({
-            name: "Toyota",
-            country: "Japan",
-            startingDate: new Date("1937-08-28"),
-            headquarters: "Toyota City, Japan",
-            founders: ["Kiichiro Toyoda"]
-        });
+        await mongoose.connection.dropDatabase(); // Clears the database before seeding
 
-        // Create a sample vehicle
-        const camry = await Vehicle.create({
-            year: 2023,
-            name: "Camry",
-            brand: toyota._id,
-            type: "Sedan",
-            description: "A popular mid-size sedan with great fuel efficiency",
-            colorsAvailable: ["Red", "Black", "White"],
-            engineType: "2.5L 4-cylinder",
-            fuelType: "Gasoline",
-            transmission: "Automatic"
-        });
+        // Seed brands
+        const brands = await brands.insertMany([
+            { name: 'Toyota', country: 'Japan', startingDate: new Date('1937-08-28'), headquarters: 'Toyota City, Japan', founders: ['Kiichiro Toyoda'] },
+            { name: 'Ford', country: 'USA', startingDate: new Date('1903-06-16'), headquarters: 'Dearborn, Michigan, USA', founders: ['Henry Ford'] }
+        ]);
 
-        // Create a sample part
-        await Part.create({
-            name: "Brake Pad",
-            brand: toyota._id,
-            vehicles: [camry._id],
-            quality: "OEM"
-        });
+        // Seed Vehicles
+        const vehicles = await Vehicle.insertMany([
+            { Name: 'Corolla', brands: brands[0]._id, Year: 2022, Type: 'Sedan', Description: 'Reliable and fuel-efficient', Engine_type: 'Inline-4', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['Red', 'Blue', 'Black'] },
+            { Name: 'F-150', brands: brands[1]._id, Year: 2023, Type: 'Truck', Description: 'Powerful work truck', Engine_type: 'V8', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['White', 'Black', 'Silver'] }
+        ]);
 
-        // Create a sample user
-        await User.create({
-            userName: "adminUser",
-            email: "admin@example.com",
-            firstName: "John",
-            lastName: "Doe",
-            accountType: "Admin",
-            phoneNumber: "123-456-7890",
-            passwordHash: "hashedpassword123" // In production, hash passwords!
-        });
+        // Seed Parts
+        const parts = await Part.insertMany([
+            { Name: 'Brake Pads', brands: brands[0]._id, Vehicles: [vehicles[0]._id], Quality: 'OEM' },
+            { Name: 'Oil Filter', brands: brands[1]._id, Vehicles: [vehicles[1]._id], Quality: 'Aftermarket' }
+        ]);
 
-        console.log('✅ Sample data added successfully!');
-    } catch (error) {
-        console.error('❌ Error seeding database:', error);
-    } finally {
+        // Seed Users
+        const users = await User.insertMany([
+            { UserName: 'admin1', Email: 'admin@example.com', FirstName: 'John', LastName: 'Doe', AccountType: 'Admin', PhoneNumber: '555-1234', PasswordHash: 'hashedpassword' },
+            { UserName: 'user1', Email: 'user@example.com', FirstName: 'Jane', LastName: 'Smith', AccountType: 'User', PhoneNumber: '555-5678', PasswordHash: 'hashedpassword' }
+        ]);
+
+        console.log('Database seeded successfully ✅');
+        mongoose.connection.close();
+    } catch (err) {
+        console.error('Error seeding database:', err);
         mongoose.connection.close();
     }
-}
+};
 
 seedDatabase();
