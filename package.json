@@ -1,35 +1,97 @@
 {
-  "name": "backend",
-  "version": "0.0.1",
-  "description": "Backend Testbed",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "lint": "eslint --fix"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Commercial Vehicle Information API",
+    "description": "API for managing commercial vehicle data including brands, dealerships, and aftermarket parts.",
+    "version": "1.0.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "",
-  "dependencies": {
-    "body-parser": "^1.20.3",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-validator": "^7.2.1",
-    "mongodb": "^6.12.0",
-    "mongoose": "^8.10.0",
-    "mongoose-to-swagger": "^1.5.1",
-    "swagger-autogen": "^2.23.7",
-    "swagger-ui-express": "^5.0.1"
+  "servers": [
+    { "url": "http://localhost:3000/api" }
+  ],
+  "paths": {
+    "/brands": {
+      "get": {
+        "summary": "Get all brands",
+        "operationId": "getBrands",
+        "responses": {
+          "200": {
+            "description": "A list of brands",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Brand" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/car-dealerships": {
+      "get": {
+        "summary": "Get all car dealerships",
+        "operationId": "getCarDealerships",
+        "responses": {
+          "200": {
+            "description": "A list of car dealerships",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CarDealership" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aftermarket": {
+      "get": {
+        "summary": "Get all aftermarket parts",
+        "operationId": "getAftermarket",
+        "responses": {
+          "200": {
+            "description": "A list of aftermarket parts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AftermarketPart" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
-  "devDependencies": {
-    "@eslint/js": "^9.18.0",
-    "eslint": "^9.18.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.14.0",
-    "nodemon": "^3.1.9",
-    "prettier": "^3.4.2"
-  },
-  "packageManager": "pnpm@9.15.3"
+  "components": {
+    "schemas": {
+      "Brand": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      },
+      "CarDealership": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "location": { "type": "string" }
+        }
+      },
+      "AftermarketPart": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "brand": { "type": "string" }
+        }
+      }
+    }
+  }
 }
