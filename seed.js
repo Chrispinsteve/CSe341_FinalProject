@@ -4,6 +4,7 @@ require('dotenv').config();
 const Brand = require('./models/brandsModel');
 const Vehicle = require('./models/vehicleModel');
 const Part = require('./models/partsModel');
+const CarDealerFranchise = require('./models/CarDealerFranchise'); // Import model
 const User = require('./models/userModel');
 
 const MONGO_URI = process.env.MONGODB_URI;
@@ -54,6 +55,32 @@ const seedDatabase = async () => {
             { UserName: 'user1', Email: 'user@example.com', FirstName: 'Jane', LastName: 'Smith', AccountType: 'User', PhoneNumber: '555-5678', PasswordHash: 'hashedpassword' }
         ]);
         console.log('Users seeded:', users);
+
+
+        // Insert Car Dealer Franchises
+const carDealerFranchises = await CarDealerFranchise.insertMany([
+    {
+        name: 'AutoNation Toyota',
+        brand: toyotaId, // Correct reference
+        address: '123 Main St',
+        city: 'Los Angeles',
+        state: 'CA',
+        country: 'USA',
+        phoneNumber: '555-123-4567',
+        emails: ['contact@autonationtoyota.com']
+    },
+    {
+        name: 'Ford Dealership',
+        brand: fordId, // Correct reference
+        address: '456 Ford St',
+        city: 'Detroit',
+        state: 'MI',
+        country: 'USA',
+        phoneNumber: '555-987-6543',
+        emails: ['contact@forddealership.com']
+    }
+]);
+console.log('Car Dealer Franchises seeded:', carDealerFranchises);
 
 
         console.log('Database seeding completed successfully.');

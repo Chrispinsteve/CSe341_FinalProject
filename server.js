@@ -10,6 +10,7 @@ const port = process.env.PORT || 3000; // Port number
 // DATA
 const models = require('./models');
 const utils = require('./utils');
+const aftermarketRoutes = require('./routes/aftermarketRoutes');
 
 models.db.mongoose
   .connect(utils.url, {})
@@ -23,3 +24,4 @@ app
   .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   .use('/', require('./routes'))
   .listen(port, () => console.log(`🚀 Server is running on port ${port}`));
+  app.use('/api/aftermarket', aftermarketRoutes);
