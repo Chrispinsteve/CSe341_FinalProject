@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 
-const brands = require('./models/brandsModel');
+const Brand = require('./models/brandsModel');
 const Vehicle = require('./models/vehicleModel');
 const Part = require('./models/partsModel');
 const User = require('./models/userModel');
@@ -10,7 +10,7 @@ const MONGO_URI = process.env.MONGODB_URI;
 
 if (!MONGO_URI) {
     console.error("Error: MONGODB_URI is undefined. Check your .env file.");
-    process.exit(1); // Exit the process if URI is missing
+    process.exit(1);
 }
 
 mongoose.connect(MONGO_URI)
@@ -20,32 +20,43 @@ mongoose.connect(MONGO_URI)
 const seedDatabase = async () => {
     try {
         await mongoose.connection.dropDatabase(); // Clears the database before seeding
+        console.log('Database cleared.');
 
-        // Seed brands
-        const brands = await brands.insertMany([
+        // Declare brands variable before usage
+        let brands;
+
+        // Insert brands
+        brands = await Brand.insertMany([
             { name: 'Toyota', country: 'Japan', startingDate: new Date('1937-08-28'), headquarters: 'Toyota City, Japan', founders: ['Kiichiro Toyoda'] },
             { name: 'Ford', country: 'USA', startingDate: new Date('1903-06-16'), headquarters: 'Dearborn, Michigan, USA', founders: ['Henry Ford'] }
         ]);
+        console.log('Brands seeded:', brands);
 
-        // Seed Vehicles
+        // Ensure brands are available before inserting vehicles
+        if (!brands || brands.length < 2) {
+            throw new Error("Brands were not seeded correctly.");
+        }
+
+        // Convert Brand IDs properly
+        const toyotaId = brands[0]._id;
+        const fordId = brands[1]._id;
+
+        // Insert vehicles with correctly formatted ObjectIds
         const vehicles = await Vehicle.insertMany([
-            { Name: 'Corolla', brands: brands[0]._id, Year: 2022, Type: 'Sedan', Description: 'Reliable and fuel-efficient', Engine_type: 'Inline-4', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['Red', 'Blue', 'Black'] },
-            { Name: 'F-150', brands: brands[1]._id, Year: 2023, Type: 'Truck', Description: 'Powerful work truck', Engine_type: 'V8', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['White', 'Black', 'Silver'] }
+            { Name: 'Corolla', Brand: toyotaId, Year: 2022, Type: 'Sedan', Description: 'Reliable and fuel-efficient', Engine_type: 'Inline-4', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['Red', 'Blue', 'Black'] },
+            { Name: 'F-150', Brand: fordId, Year: 2023, Type: 'Truck', Description: 'Powerful work truck', Engine_type: 'V8', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['White', 'Black', 'Silver'] }
         ]);
+        console.log('Vehicles seeded:', vehicles);
 
-        // Seed Parts
-        const parts = await Part.insertMany([
-            { Name: 'Brake Pads', brands: brands[0]._id, Vehicles: [vehicles[0]._id], Quality: 'OEM' },
-            { Name: 'Oil Filter', brands: brands[1]._id, Vehicles: [vehicles[1]._id], Quality: 'Aftermarket' }
-        ]);
-
-        // Seed Users
+        // Insert users (fix casing of "UserName" and ensure "Admin" is valid)
         const users = await User.insertMany([
             { UserName: 'admin1', Email: 'admin@example.com', FirstName: 'John', LastName: 'Doe', AccountType: 'Admin', PhoneNumber: '555-1234', PasswordHash: 'hashedpassword' },
             { UserName: 'user1', Email: 'user@example.com', FirstName: 'Jane', LastName: 'Smith', AccountType: 'User', PhoneNumber: '555-5678', PasswordHash: 'hashedpassword' }
         ]);
+        console.log('Users seeded:', users);
 
-        console.log('Database seeded successfully ✅');
+
+        console.log('Database seeding completed successfully.');
         mongoose.connection.close();
     } catch (err) {
         console.error('Error seeding database:', err);
