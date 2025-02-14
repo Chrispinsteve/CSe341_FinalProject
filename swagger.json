@@ -12,7 +12,7 @@
     },
     {
       "url": "https://cse341-finalproject-4zhu.onrender.com",
-      "description": "render server"
+      "description": "Render server"
     }
   ],
   "paths": {
@@ -746,6 +746,15 @@
       "User": {
         "type": "object",
         "properties": {
+          "UserName": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
           "Email": {
             "type": "object",
             "properties": {
@@ -773,24 +782,6 @@
               }
             }
           },
-          "PasswordHash": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              }
-            }
-          },
-          "Username": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              }
-            }
-          },
           "AccountType": {
             "type": "object",
             "properties": {
@@ -801,8 +792,8 @@
               "enum": {
                 "type": "array",
                 "example": [
-                  "admin",
-                  "customer"
+                  "Admin",
+                  "User"
                 ],
                 "items": {
                   "type": "string"
@@ -819,16 +810,12 @@
               }
             }
           },
-          "CreatedAt": {
+          "PasswordHash": {
             "type": "object",
             "properties": {
               "type": {
                 "type": "string",
                 "example": "string"
-              },
-              "format": {
-                "type": "string",
-                "example": "date-time"
               }
             }
           },
@@ -846,46 +833,6 @@
       "Vehicle": {
         "type": "object",
         "properties": {
-          "Brand": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              }
-            }
-          },
-          "Description": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              },
-              "required": {
-                "type": "boolean",
-                "example": false
-              }
-            }
-          },
-          "Engine_type": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              }
-            }
-          },
-          "Fuel_type": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              }
-            }
-          },
           "Name": {
             "type": "object",
             "properties": {
@@ -895,12 +842,12 @@
               }
             }
           },
-          "Transmission": {
+          "Brand": {
             "type": "object",
             "properties": {
               "type": {
                 "type": "string",
-                "example": "string"
+                "example": "schemaobjectid"
               }
             }
           },
@@ -922,6 +869,42 @@
               }
             }
           },
+          "Description": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "Engine_type": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "Fuel_type": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "Transmission": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
           "colors_available": {
             "type": "object",
             "properties": {
@@ -935,25 +918,8 @@
                   "type": {
                     "type": "string",
                     "example": "string"
-                  },
-                  "required": {
-                    "type": "boolean",
-                    "example": true
                   }
                 }
-              }
-            }
-          },
-          "CreatedAt": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "string"
-              },
-              "format": {
-                "type": "string",
-                "example": "date-time"
               }
             }
           },
