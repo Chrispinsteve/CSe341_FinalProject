@@ -1,4 +1,5 @@
 const express = require('express'); // Import express
+const cors = require('cors'); // Import CORS for cross-origin requests
 const app = express(); // Initialize express
 
 // SWAGGER
@@ -32,8 +33,15 @@ models.db.mongoose
   });
 
 // MIDDLEWARES
+app.use(cors()); // Enable CORS for all routes (important for frontend requests)
 app.use(express.json()); // Replaces bodyParser.json()
 app.use(express.urlencoded({ extended: true })); // Replaces bodyParser.urlencoded()
+
+// LOGGING MIDDLEWARE
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url} at ${new Date().toISOString()}`); // Log request details
+  next(); // Proceed to next middleware or route handler
+});
 
 // SWAGGER DOCS
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
