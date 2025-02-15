@@ -2,26 +2,20 @@ const User = require('../models/userModel');
 
 // Create a single user
 exports.createUser = async (req, res) => {
-  /*
-   #swagger.tags = ['Users']
-        #swagger.requestBody = {
-        description: 'Create A User',
-         required: true,
-         content: {
-           "application/json": {
-             schema: { $ref: "#/components/schemas/User" },
-          }
-        }
-     }
-  */
+  console.log("✅ Received request body:", req.body); // Debugging log
+  
   try {
     const user = new User(req.body);
     await user.save();
+    
+    console.log("✅ User created successfully:", user); // Debugging log
     res.status(201).json(user);
   } catch (error) {
+    console.error("❌ Error creating user:", error);
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Create multiple users from an array
 exports.createUsersWithArray = async (req, res) => {
