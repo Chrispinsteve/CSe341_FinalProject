@@ -13,6 +13,9 @@ const User = require('./models/userModel');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Generate Swagger documentation before starting the server
+require('./swagger.js');  // Ensure this is required before the server starts
+
 // Connect to MongoDB like seed.js
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
@@ -75,11 +78,9 @@ app.use(express.urlencoded({ extended: true }));
 // Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Routes (you can add your routes here)
+// Routes
 app.use('/api/aftermarket', require('./routes/aftermarketRoutes'));
 app.use('/api/user', require('./routes/userRoute'));
-app.use('/api/vehicles', require('./routes/vehicleRoutes'));  // Adding vehicle routes
-app.use('/api/franchises', require('./routes/franchiseRoutes'));  // Adding franchise routes
 app.use('/', require('./routes'));
 
 // Logging Middleware

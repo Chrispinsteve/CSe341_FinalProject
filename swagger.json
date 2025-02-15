@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Commercial Vehicle Information Database",
-    "description": "Commercial Vehicle Information Database",
+    "description": "API documentation for managing vehicle, user, and franchise data.",
     "version": "1.0.0"
   },
   "servers": [
@@ -238,106 +238,35 @@
       }
     },
     "/user/": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "requestBody": {
-          "description": "Create A User",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/createWithArray": {
-      "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/user/createWithList": {
-      "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/user/login": {
       "get": {
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
-      }
-    },
-    "/user/logout": {
-      "get": {
+      },
+      "post": {
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
     },
-    "/user/findByType": {
+    "/user/{userId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/user/{username}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "username",
+            "name": "userId",
             "in": "path",
             "required": true,
             "schema": {
@@ -349,11 +278,11 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -361,7 +290,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "username",
+            "name": "userId",
             "in": "path",
             "required": true,
             "schema": {
@@ -385,7 +314,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "username",
+            "name": "userId",
             "in": "path",
             "required": true,
             "schema": {
@@ -394,23 +323,31 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/vehicle/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
       "post": {
-        "tags": [
-          "Vehicle"
-        ],
         "description": "",
         "responses": {
           "201": {
@@ -419,28 +356,16 @@
           "400": {
             "description": "Bad Request"
           }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
-              }
-            }
-          }
         }
-      },
-      "put": {
-        "tags": [
-          "Vehicle"
-        ],
+      }
+    },
+    "/vehicle/{vehicleId}": {
+      "get": {
         "description": "",
         "parameters": [
           {
             "name": "vehicleId",
-            "in": "query",
-            "description": "ID of the vehicle to update",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string"
@@ -451,123 +376,19 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "404": {
             "description": "Not Found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
-              }
-            }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/vehicle/findByBrand": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
+      "put": {
         "description": "",
         "parameters": [
           {
-            "name": "brand",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/vehicle/findByYear": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "year",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/vehicle/findByType": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/vehicle/{vehiclesId}": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "vehiclesId",
+            "name": "vehicleId",
             "in": "path",
             "required": true,
             "schema": {
@@ -588,13 +409,10 @@
         }
       },
       "delete": {
-        "tags": [
-          "Vehicle"
-        ],
         "description": "",
         "parameters": [
           {
-            "name": "vehiclesId",
+            "name": "vehicleId",
             "in": "path",
             "required": true,
             "schema": {
@@ -603,14 +421,14 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -890,6 +708,101 @@
             }
           },
           "colors_available": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "array"
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              }
+            }
+          },
+          "_id": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        }
+      },
+      "CarDealerFranchise": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "brand": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "schemaobjectid"
+              }
+            }
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "city": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "state": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "country": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "phoneNumber": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "emails": {
             "type": "object",
             "properties": {
               "type": {
