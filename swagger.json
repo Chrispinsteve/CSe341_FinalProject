@@ -239,6 +239,9 @@
     },
     "/user/": {
       "post": {
+        "tags": [
+          "Users"
+        ],
         "description": "",
         "responses": {
           "201": {
@@ -246,6 +249,20 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "description": "Create a User",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
           }
         }
       }

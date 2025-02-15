@@ -1,18 +1,51 @@
 const User = require('../models/userModel');
+const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
-// Create a single user
+// Create a single user with validation
 exports.createUser = async (req, res) => {
-  console.log("✅ Received request body:", req.body); // Debugging log
-  
+  /*
+   #swagger.tags = ['Users']
+   #swagger.requestBody = {
+      description: 'Create a User',
+      required: true,
+      content: {
+        "application/json": {
+          schema: { $ref: "#/components/schemas/User" }
+        }
+      }
+   }
+  */
+
+  // Validate request body
+  await Promise.all([
+    body('UserName').isString().notEmpty().withMessage('Username is required').run(req),
+    body('Email').isEmail().withMessage('Valid email is required').run(req),
+    body('FirstName').isString().notEmpty().withMessage('First name is required').run(req),
+    body('LastName').isString().notEmpty().withMessage('Last name is required').run(req),
+    body('AccountType').isIn(['Admin', 'User']).withMessage('Account type must be Admin or User').run(req),
+    body('PhoneNumber').isString().optional().run(req),
+    body('PasswordHash').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long').run(req),
+  ]);
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+  }
+
   try {
-    const user = new User(req.body);
-    await user.save();
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(req.body.PasswordHash, 10);
     
-    console.log("✅ User created successfully:", user); // Debugging log
-    res.status(201).json(user);
+    const user = new User({
+      ...req.body,
+      PasswordHash: hashedPassword,
+    });
+
+    await user.save();
+    res.status(201).json({ message: 'User created successfully', user });
   } catch (error) {
-    console.error("❌ Error creating user:", error);
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
