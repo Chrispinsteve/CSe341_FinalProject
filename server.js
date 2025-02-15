@@ -17,6 +17,7 @@ const utils = require('./utils');
 // ROUTES
 const aftermarketRoutes = require('./routes/aftermarketRoutes');
 const mainRoutes = require('./routes');
+const userRoutes = require('./routes/userRoute'); // ✅ Added user routes
 
 // MONGOOSE CONNECTION
 models.db.mongoose
@@ -48,4 +49,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ROUTES
 app.use('/api/aftermarket', aftermarketRoutes);
+app.use('/api/user', userRoutes); // ✅ Added user routes
 app.use('/', mainRoutes);
+

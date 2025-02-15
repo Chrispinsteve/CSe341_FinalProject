@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/userController');
 
+// ✅ Ensure all routes are mapped correctly
 router.post('/', usersController.createUser);
 router.post('/createWithArray', usersController.createUsersWithArray);
 router.post('/createWithList', usersController.createUsersWithList);
