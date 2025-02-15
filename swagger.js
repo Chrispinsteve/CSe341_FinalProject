@@ -26,6 +26,7 @@ const doc = {
       description: 'Render server',
     },
   ],
+  
   components: {
     schemas: {
       Part: partsSchema.properties,

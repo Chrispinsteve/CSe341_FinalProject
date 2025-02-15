@@ -1,54 +1,87 @@
-const express = require('express'); // Import express
-const cors = require('cors'); // Import CORS for cross-origin requests
-const app = express(); // Initialize express
-
-// SWAGGER
-require('./swagger');
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const Brand = require('./models/brandsModel');
+const Vehicle = require('./models/vehicleModel');
+const Part = require('./models/partsModel');
+const CarDealerFranchise = require('./models/CarDealerFranchise');
+const User = require('./models/userModel');
 
-// PORT
+const app = express();
 const port = process.env.PORT || 3000;
 
-// DATABASE & MODELS
-const models = require('./models');
-const utils = require('./utils');
+// Connect to MongoDB like seed.js
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log('✅ Mongoose connected to MongoDB!');
+        seedDatabase(); // Seed data when server starts
+        app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+    })
+    .catch((err) => {
+        console.error('❌ Cannot connect to MongoDB', err);
+        process.exit(1);
+    });
 
-// ROUTES
-const aftermarketRoutes = require('./routes/aftermarketRoutes');
-const mainRoutes = require('./routes');
-const userRoutes = require('./routes/userRoute'); // ✅ Added user routes
+// Seed function like in seed.js
+const seedDatabase = async () => {
+    try {
+        await mongoose.connection.dropDatabase(); // Clear DB before seeding
+        console.log('Database cleared.');
 
-// MONGOOSE CONNECTION
-models.db.mongoose
-  .connect(utils.url, {})
-  .then(() => {
-    console.log('✅ Mongoose connected through MongoDB!');
-    
-    // START SERVER ONLY AFTER DB CONNECTION
-    app.listen(port, () => console.log(`🚀 Server is running on port ${port}`));
-  })
-  .catch((err) => {
-    console.error('❌ Cannot connect to MongoDB', err);
-    process.exit(1); // Exit if DB connection fails
-  });
+        // Seed brands
+        const brands = await Brand.insertMany([
+            { name: 'Toyota', country: 'Japan', startingDate: new Date('1937-08-28'), headquarters: 'Toyota City, Japan', founders: ['Kiichiro Toyoda'] },
+            { name: 'Ford', country: 'USA', startingDate: new Date('1903-06-16'), headquarters: 'Dearborn, Michigan, USA', founders: ['Henry Ford'] }
+        ]);
+        console.log('Brands seeded:', brands);
 
-// MIDDLEWARES
-app.use(cors()); // Enable CORS for all routes (important for frontend requests)
-app.use(express.json()); // Replaces bodyParser.json()
-app.use(express.urlencoded({ extended: true })); // Replaces bodyParser.urlencoded()
+        // Seed vehicles with correct references
+        const toyotaId = brands[0]._id;
+        const fordId = brands[1]._id;
+        const vehicles = await Vehicle.insertMany([
+            { Name: 'Corolla', Brand: toyotaId, Year: 2022, Type: 'Sedan', Description: 'Reliable and fuel-efficient', Engine_type: 'Inline-4', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['Red', 'Blue', 'Black'] },
+            { Name: 'F-150', Brand: fordId, Year: 2023, Type: 'Truck', Description: 'Powerful work truck', Engine_type: 'V8', Fuel_type: 'Gasoline', Transmission: 'Automatic', colors_available: ['White', 'Black', 'Silver'] }
+        ]);
+        console.log('Vehicles seeded:', vehicles);
 
-// LOGGING MIDDLEWARE
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url} at ${new Date().toISOString()}`); // Log request details
-  next(); // Proceed to next middleware or route handler
-});
+        // Seed users
+        const users = await User.insertMany([
+            { UserName: 'admin1', Email: 'admin@example.com', FirstName: 'John', LastName: 'Doe', AccountType: 'Admin', PhoneNumber: '555-1234', PasswordHash: 'hashedpassword' },
+            { UserName: 'user1', Email: 'user@example.com', FirstName: 'Jane', LastName: 'Smith', AccountType: 'User', PhoneNumber: '555-5678', PasswordHash: 'hashedpassword' }
+        ]);
+        console.log('Users seeded:', users);
 
-// SWAGGER DOCS
+        // Seed Car Dealer Franchises
+        const carDealerFranchises = await CarDealerFranchise.insertMany([
+            { name: 'AutoNation Toyota', brand: toyotaId, address: '123 Main St', city: 'Los Angeles', state: 'CA', country: 'USA', phoneNumber: '555-123-4567', emails: ['contact@autonationtoyota.com'] },
+            { name: 'Ford Dealership', brand: fordId, address: '456 Ford St', city: 'Detroit', state: 'MI', country: 'USA', phoneNumber: '555-987-6543', emails: ['contact@forddealership.com'] }
+        ]);
+        console.log('Car Dealer Franchises seeded:', carDealerFranchises);
+
+        console.log('Database seeding completed successfully.');
+    } catch (err) {
+        console.error('Error seeding database:', err);
+    }
+};
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// ROUTES
-app.use('/api/aftermarket', aftermarketRoutes);
-app.use('/api/user', userRoutes); // ✅ Added user routes
-app.use('/', mainRoutes);
+// Routes (you can add your routes here)
+app.use('/api/aftermarket', require('./routes/aftermarketRoutes'));
+app.use('/api/user', require('./routes/userRoute'));
+app.use('/', require('./routes'));
 
+// Logging Middleware
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url} at ${new Date().toISOString()}`);
+    next();
+});
