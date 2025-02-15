@@ -78,6 +78,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Routes (you can add your routes here)
 app.use('/api/aftermarket', require('./routes/aftermarketRoutes'));
 app.use('/api/user', require('./routes/userRoute'));
+app.use('/api/vehicles', require('./routes/vehicleRoutes'));  // Adding vehicle routes
+app.use('/api/franchises', require('./routes/franchiseRoutes'));  // Adding franchise routes
 app.use('/', require('./routes'));
 
 // Logging Middleware
